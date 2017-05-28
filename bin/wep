@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+
+require('commander')
+  .version(require('../package.json').version)
+  .usage('<command> [options]')
+  .command('publish', 'publish files')
+  .parse(process.argv);

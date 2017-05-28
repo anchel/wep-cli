@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var fs = require('fs');
+var program = require('commander');
+var resolveCwd = require('resolve-cwd');
+var package = require('../package.json');
+
+program
+  .usage('[file-name]')
+  .option('-f, --force', 'force create')
+
+// console.log('process.argv', process.argv);
+
+program.on('--help', () => {
+  console.log('');
+  console.log('  wep-init file-name');
+  console.log('');
+});
+
+function help () {
+  program.parse(process.argv)
+  console.log('program.force', typeof(program.force), program.force);
+}
+help();
+
+let force = program.force;
+let fileName = program.args[0] || 'wep.config.js';
+
+let pwd = process.cwd();
+let defaultFilePath = path.resolve(__dirname, '../config/wep.config.js');
+
+let targetFilePath = path.join(pwd, fileName);
+
+if (!force && fs.existsSync(targetFilePath)) {
+  console.log('')
+  console.log(`${fileName} exists, do nothing`);
+  process.exit(0);
+}
+
+fs.writeFileSync(targetFilePath, fs.readFileSync(defaultFilePath));
+
+console.log('')
+console.log(`created config file: ${fileName}`)
+console.log(`${package.name} successfull`)

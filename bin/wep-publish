@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+
+var path = require('path');
+var fs = require('fs');
+var os = require('os');
+var co = require('co');
+var program = require('commander');
+var inquirer = require('inquirer');
+var chalk = require('chalk')
+var resolveCwd = require('resolve-cwd');
+var mkdirpromise = require('mkdir-promise');
+var cloneDeep = require('clone-deep');
+var glob = require('glob');
+
+var package = require('../package.json');
+
+program
+  .usage('<project-name>')
+  .option('-c, --conf <conf>', 'define config file')
+
+// console.log('process.argv', process.argv);
+
+program.on('--help', () => {
+  console.log('');
+  console.log('  wep-publish project-name');
+  console.log('');
+});
+
+function help () {
+  program.parse(process.argv)
+}
+help();
+
+let pwd = process.cwd();
+
+
+let confFileName = program.conf || 'wep.config.js';
+let confFileNamePath = path.resolve(pwd, confFileName);
+
+let wepConfig = require(confFileNamePath);
+// console.log('wepConfig', wepConfig)
+
+let myWepConfig = cloneDeep(wepConfig)
+
+
+
+let zip = require('../lib/zip');
+let upload = require('../lib/upload')
+
+co(function* () {
+  let answers = yield inquirer.prompt([{
+    type: 'list',
+    name: 'selenv',
+    message: '请选择要部署的环境',
+    choices: Object.keys(myWepConfig.envs)
+  }]);
+  // console.log('answers', answers);
+  let envcfg = myWepConfig.envs[answers.selenv];
+  if (!envcfg) {
+    throw new Error('选择的环境配置不存在: ' + answers.selenv);
+  }
+  // console.log('envcfg', envcfg);
+  myWepConfig.envcfg = envcfg;
+
+  let answers2 = yield inquirer.prompt([{
+    type: 'confirm',
+    name: 'ayok',
+    default: false,
+    message: '您选择的环境是：' + answers.selenv + '，确定要部署吗？',
+  }]);
+  // console.log('answers2', answers2);
+  if (!answers2.ayok) {
+    console.log('you cancel publish')
+    return false;
+  }
+
+  let zipret = yield zip(myWepConfig);
+  let uploadret = yield upload(myWepConfig)
+  // console.log('zipret: ', zipret)
+  // console.log('uploadret: ', uploadret)
+
+}).then(function () {
+  console.log(`publish ${chalk.green("successful")}`);
+}).catch(function (err) {
+  console.log(`publish ${chalk.red('fail ('+err.message+')')}`);
+});

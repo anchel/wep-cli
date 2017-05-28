@@ -1,2 +1,2 @@
 # wep-cli
-weplus frontend publish tool
+前端发布工具
