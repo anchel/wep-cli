@@ -20,7 +20,6 @@ program.on('--help', () => {
 
 function help () {
   program.parse(process.argv)
-  console.log('program.force', typeof(program.force), program.force);
 }
 help();
 
@@ -42,4 +41,4 @@ fs.writeFileSync(targetFilePath, fs.readFileSync(defaultFilePath));
 
 console.log('')
 console.log(`created config file: ${fileName}`)
-console.log(`${package.name} successfull`)
+console.log(`init successfull`)
