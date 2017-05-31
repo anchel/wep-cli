@@ -4,5 +4,5 @@ require('commander')
   .version(require('../package.json').version)
   .usage('<command> [options]')
   .command('init', 'create a config file')
-  .command('publish', 'publish')
+  .command('publish', 'execute publish')
   .parse(process.argv);

@@ -1,8 +1,9 @@
 
+let wep = require('wep');
 
-module.exports = {
+wep.init({
 
-  envs: {
+  env: {
     liugong_pre: {
       cdn: {
         userDir: '/wenzhen/pre',
@@ -17,23 +18,28 @@ module.exports = {
   },
 
   zip: {
-    dist: {
-      src: [{
-        file: './dist/app.js',
-        name: 'xxoo/app.js',
-        pattern: '**/*',
-        cwd: './dist/'
-      }, {
-        pattern: '**/*',
-        cwd: './node_modules/async/'
-      }]
-    },
+    options: {
 
-    dist2: {
-      src: [{
-        pattern: '**/*',
-        cwd: './node_modules/request/'
-      }]
+    },
+    files: {
+      dist: {
+        src: [{
+          file: './config/wep.config.js',
+          name: 'xxoo/config.js',
+        }, {
+          pattern: '**/*',
+          cwd: './node_modules/async/'
+        }],
+        dest: './tmp'
+      },
+
+      dist2: {
+        src: [{
+          pattern: '**/*',
+          cwd: './node_modules/request/'
+        }],
+        dest: './tmp'
+      }
     }
   },
 
@@ -51,20 +57,18 @@ module.exports = {
       {
         options: {
           url: 'http://wechat.anchel.cn/upload/uploadimg',
-          qs: {isunzip: 1},
+          qs: { isunzip: 1 },
           headers: {},
         },
         src: ['./tmp/dist.zip', './tmp/dist2.zip'],
-        remoteDir: '/wenzhen/pre'
       },
       {
         options: {
           url: 'http://wechat.anchel.cn/upload/uploadimg',
         },
         src: ['./dist/app.js'],
-        remoteDir: '/wenzhen/pre'
       }
     ]
   }
 
-}
+});

@@ -3,12 +3,12 @@
 var path = require('path');
 var fs = require('fs');
 var program = require('commander');
-var resolveCwd = require('resolve-cwd');
 var package = require('../package.json');
 
 program
-  .usage('[file-name]')
-  .option('-f, --force', 'force create')
+  .version(package.version)
+  .usage('[options] [file-name]')
+  .option('-f, --force', 'force create');
 
 // console.log('process.argv', process.argv);
 

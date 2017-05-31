@@ -1,28 +1,26 @@
 #!/usr/bin/env node
 
-var path = require('path');
-var fs = require('fs');
-var os = require('os');
-var co = require('co');
-var program = require('commander');
-var inquirer = require('inquirer');
-var chalk = require('chalk')
-var resolveCwd = require('resolve-cwd');
-var mkdirpromise = require('mkdir-promise');
-var cloneDeep = require('clone-deep');
-var glob = require('glob');
+let path = require('path');
+let fs = require('fs');
+let os = require('os');
+let co = require('co');
+let program = require('commander');
+let inquirer = require('inquirer');
+let chalk = require('chalk');
+let glob = require('glob');
+let findup = require('findup-sync');
+let resolve = require('resolve').sync;
 
 var package = require('../package.json');
 
 program
-  .usage('<project-name>')
-  .option('-c, --conf <conf>', 'define config file')
-
-// console.log('process.argv', process.argv);
+  .version(package.version)
+  .usage('[options] <task-name>')
+  .option('-c, --conf <conf>', 'define config file');
 
 program.on('--help', () => {
   console.log('');
-  console.log('  wep-publish project-name');
+  console.log('  wep-publish task-name');
   console.log('');
 });
 
@@ -33,54 +31,19 @@ help();
 
 let pwd = process.cwd();
 
-
 let confFileName = program.conf || 'wep.config.js';
-let confFileNamePath = path.resolve(pwd, confFileName);
+let confFilePath = path.resolve(pwd, confFileName);
+let basedir = path.dirname(confFilePath);
 
-let wepConfig = require(confFileNamePath);
-// console.log('wepConfig', wepConfig)
-
-let myWepConfig = cloneDeep(wepConfig)
-
-
-
-let zip = require('../lib/zip');
-let upload = require('../lib/upload')
-
-co(function* () {
-  let answers = yield inquirer.prompt([{
-    type: 'list',
-    name: 'selenv',
-    message: '请选择要部署的环境',
-    choices: Object.keys(myWepConfig.envs)
-  }]);
-  // console.log('answers', answers);
-  let envcfg = myWepConfig.envs[answers.selenv];
-  if (!envcfg) {
-    throw new Error('选择的环境配置不存在: ' + answers.selenv);
+let weppath = '';
+try {
+  weppath = resolve('wep', {basedir: basedir});
+} catch (ex) {
+  weppath = findup('lib/index.js');
+  // No wep install found!
+  if (!weppath) {
+    console.log(chalk.red('Unable to find local wep.'));
+    process.exit(0);
   }
-  // console.log('envcfg', envcfg);
-  myWepConfig.envcfg = envcfg;
-
-  let answers2 = yield inquirer.prompt([{
-    type: 'confirm',
-    name: 'ayok',
-    default: false,
-    message: '您选择的环境是：' + answers.selenv + '，确定要部署吗？',
-  }]);
-  // console.log('answers2', answers2);
-  if (!answers2.ayok) {
-    console.log('you cancel publish')
-    return false;
-  }
-
-  let zipret = yield zip(myWepConfig);
-  let uploadret = yield upload(myWepConfig)
-  // console.log('zipret: ', zipret)
-  // console.log('uploadret: ', uploadret)
-
-}).then(function () {
-  console.log(`publish ${chalk.green("successful")}`);
-}).catch(function (err) {
-  console.log(`publish ${chalk.red('fail ('+err.message+')')}`);
-});
+}
+require(weppath).cli(program, confFilePath);
