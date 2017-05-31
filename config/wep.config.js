@@ -45,13 +45,13 @@ module.exports = function (wep) {
 
     upload: {
       options: {
-        url: 'http://inner.up.cdn.qq.com:8080/uploadserver/uploadfile.jsp',
+        url: 'http://demo.anchel.cn/',
         qs: {
           appname: 'hospital_img',
           user: 'ancheltong',
         },
         headers: {
-          'X-CDN-Authentication': 'EB2522599A6CBAF6DC4450BC7FA1AAF7'
+
         },
         // proxy: 'http://127.0.0.1:8888'
       },
