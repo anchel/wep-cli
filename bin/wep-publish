@@ -29,6 +29,7 @@ function help () {
 }
 help();
 
+
 let pwd = process.cwd();
 
 let confFileName = program.conf || 'wep.config.js';
@@ -46,4 +47,5 @@ try {
     process.exit(0);
   }
 }
-require(weppath).cli(program, confFilePath);
+
+require(weppath).cli(program);

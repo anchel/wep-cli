@@ -39,6 +39,6 @@ if (!force && fs.existsSync(targetFilePath)) {
 
 fs.writeFileSync(targetFilePath, fs.readFileSync(defaultFilePath));
 
-console.log('')
-console.log(`created config file: ${fileName}`)
-console.log(`init successfull`)
+console.log('');
+console.log(`created config file: ${fileName}`);
+console.log(`init successfull`);
