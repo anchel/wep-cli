@@ -28,7 +28,7 @@ module.exports = function (wep) {
             name: 'xxoo/config.json',
           }, {
             pattern: '**/*',
-            cwd: './node_modules/async/'
+            cwd: './lib/'
           }],
           dest: './tmp'
         },
@@ -45,28 +45,27 @@ module.exports = function (wep) {
 
     upload: {
       options: {
-        url: 'http://demo.anchel.cn/',
+        url: 'www.anchel.cn',
         qs: {
           appname: 'hospital_img',
-          user: 'ancheltong',
+          // user: 'ancheltong',
         },
         headers: {
-
-        },
-        // proxy: 'http://127.0.0.1:8888'
+          
+        }
       },
       files: [
         {
           src: ['./README.md'],
-          dest: '/wenzhen/ancheldev/doctor/xxoo/aa'
+          dest: '/wenzhen/ancheldev/doctor/xxoo/bb'
         },
         {
           options: {
             qs: { isunzip: 1 },
             headers: {},
           },
-          src: ['./tmp/dist.zip', './tmp/dist2.zip'],
-          dest: '/wenzhen/ancheldev/doctor/xxoo'
+          src: ['./tmp/dist.zip', {pattern: './lib/**/*.js'}, './tmp/dist2.zip'],
+          dest: '/wenzhen/ancheldev/doctor/xxoo/${envcfg.cdn.userDir}bb'
         },
       ]
     }

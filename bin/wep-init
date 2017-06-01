@@ -24,10 +24,10 @@ function help () {
 help();
 
 let force = program.force;
-let fileName = program.args[0] || 'wep.config.js';
+let fileName = program.args[0] || 'wep.publish.js';
 
 let pwd = process.cwd();
-let defaultFilePath = path.resolve(__dirname, '../config/wep.config.js');
+let defaultFilePath = path.resolve(__dirname, '../config/wep.publish.js');
 
 let targetFilePath = path.join(pwd, fileName);
 
